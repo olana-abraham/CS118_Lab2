@@ -3,14 +3,16 @@ module TwosToSignMag (
     output wire [11:0] absoluteNum,
     output wire sign);
 
-    assign sign = d[11];
+    always @(*) begin
+
+     sign = d[11];
     if (sign == 1) begin
-        assign absoluteNum = ~d[11:0] + 1;
+         absoluteNum = ~d[11:0] + 1;
     end
     else begin
-        assign absoluteNum = d[11:0];
+         absoluteNum = d[11:0];
     end
-
+    end
 endmodule
 
 module FloatingPointConvert (
@@ -74,24 +76,25 @@ module Rounding(
     output wire [2:0] E,
     output wire [3:0] F
 );
-
+    always @(*) begin
     if(fifth_bit == 1) begin
 
-        significand = significand + 1;
+         significand = significand + 1;
 
         if(significand[4] == 1) begin
         
-            exponent = exponent + 1;
-            significand = significand >> 1;
+             exponent = exponent + 1;
+             significand = significand >> 1;
 
             if(exponent[3] == 1) begin
-                exponent = 'b111;
-                significand = 'b1111;
+                 exponent = 'b111;
+                 significand = 'b1111;
             end
         end
     end
 
-    assign E = exponent[2:0];
-    assign F = significand[3:0];
+     E = exponent[2:0];
+     F = significand[3:0];
+    end
 
 endmodule
