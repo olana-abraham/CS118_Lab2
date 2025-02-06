@@ -73,8 +73,8 @@ module Rounding(
     input wire [3:0] exponent,
     input wire fifth_bit,
     input wire [4:0] significand,
-    output reg [2:0] E,
-    output reg [3:0] F
+    output reg [2:0] Ex,
+    output reg [3:0] Val
 );
 
     reg [3:0] exp_Store;
@@ -98,8 +98,23 @@ module Rounding(
         end
     end
 
-     E = exp_Store[2:0];
-     F = sig_Store[3:0];
+     Ex = exp_Store[2:0];
+     Val = sig_Store[3:0];
     end
+
+endmodule
+
+module fpcvt(
+    input wire [11:0] D,
+    output wire S,
+    output wire [2:0] E,
+    output wire [3:0] F
+);
+
+    wire fifth;
+
+    TwosToSignMag u1 (.d(D), .absoluteNum(D), .sign(S));
+    FloatingPointConvert u2 (.absoluteNum(D), .exponent(E), .significand(F), .fifth_bit(fifth));
+    Rounding u3 (.exponent(E), .significand(F), .fifth_bit(fifth), .Ex(E), .Val(F));
 
 endmodule
