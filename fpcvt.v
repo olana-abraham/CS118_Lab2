@@ -16,7 +16,7 @@ module TwosToSignMag (
 endmodule
 
 module FloatingPointConvert (
-    input reg [11:0] absoluteNum,
+    input wire [11:0] absoluteNum,
     output reg [2:0] exponent,
     output reg [3:0] significand,
     output reg fifth_bit
@@ -70,31 +70,36 @@ module FloatingPointConvert (
 endmodule
 
 module Rounding(
-    input reg [3:0] exponent,
-    input reg fifth_bit,
-    input reg [4:0] significand,
+    input wire [3:0] exponent,
+    input wire fifth_bit,
+    input wire [4:0] significand,
     output reg [2:0] E,
     output reg [3:0] F
 );
+
+    reg [3:0] exp_Store;
+    reg [4:0] sig_Store;
+    reg fifth_Store;
+
     always @(*) begin
-    if(fifth_bit == 1) begin
+    if(fifth_Store == 1) begin
 
-         significand = significand + 1;
+         sig_Store = sig_Store + 1;
 
-        if(significand[4] == 1) begin
+        if(sig_Store[4] == 1) begin
         
-             exponent = exponent + 1;
-             significand = significand >> 1;
+             exp_Store = exp_Store + 1;
+             sig_Store = sig_Store >> 1;
 
-            if(exponent[3] == 1) begin
-                 exponent = 'b111;
-                 significand = 'b1111;
+            if(exp_Store[3] == 1) begin
+                 exp_Store = 'b111;
+                 sig_Store = 'b1111;
             end
         end
     end
 
-     E = exponent[2:0];
-     F = significand[3:0];
+     E = exp_Store[2:0];
+     F = sig_Store[3:0];
     end
 
 endmodule
